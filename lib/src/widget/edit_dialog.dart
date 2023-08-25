@@ -63,34 +63,30 @@ class _EditDialogState extends State<EditDialog> {
         if (oldCell.value is String) {
           resultCellList.add(
             ExpandableCell<String>(
-              columnTitle: oldCell.columnTitle,
-              value: controllers[i].text,
-              cellEditable: oldCell?.cellEditable
-            ),
+                columnTitle: oldCell.columnTitle,
+                value: controllers[i].text,
+                cellEditable: oldCell.cellEditable),
           );
         } else if (oldCell.value is bool) {
           resultCellList.add(
             ExpandableCell<bool>(
-              columnTitle: oldCell.columnTitle,
-              value: controllers[i].text.parseToBool,
-              cellEditable: oldCell?.cellEditable
-            ),
+                columnTitle: oldCell.columnTitle,
+                value: controllers[i].text.parseToBool,
+                cellEditable: oldCell.cellEditable),
           );
         } else if (oldCell.value is int) {
           resultCellList.add(
             ExpandableCell<int>(
-              columnTitle: oldCell.columnTitle,
-              value: int.parse(controllers[i].text),
-              cellEditable: oldCell?.cellEditable
-            ),
+                columnTitle: oldCell.columnTitle,
+                value: int.parse(controllers[i].text),
+                cellEditable: oldCell.cellEditable),
           );
         } else if (oldCell.value is double) {
           resultCellList.add(
             ExpandableCell<double>(
-              columnTitle: oldCell.columnTitle,
-              value: double.parse(controllers[i].text),
-              cellEditable: oldCell?.cellEditable
-            ),
+                columnTitle: oldCell.columnTitle,
+                value: double.parse(controllers[i].text),
+                cellEditable: oldCell.cellEditable),
           );
         } else {
           throw NoSupportException(oldCell.value.runtimeType.toString());
@@ -149,11 +145,10 @@ class _EditDialogState extends State<EditDialog> {
     for (int i = 0; i < rowCells.length; i++) {
       widgets.add(
         EditRow(
-          controller: controllers[i],
-          columnName: rowCells[i].columnTitle,
-          valueType: rowCells[i].value.runtimeType,
-          editable: oldCell?.cellEditable
-        ),
+            controller: controllers[i],
+            columnName: rowCells[i].columnTitle,
+            valueType: rowCells[i].value.runtimeType,
+            editable: rowCells[i].cellEditable),
       );
     }
 
@@ -174,8 +169,7 @@ class EditRow extends StatefulWidget {
       required this.controller,
       required this.columnName,
       required this.valueType,
-      this.editable
-      })
+      this.editable})
       : super(key: key);
 
   @override
@@ -197,17 +191,14 @@ class _EditRowState extends State<EditRow> {
             padding: const EdgeInsets.symmetric(vertical: 3),
             child: widget.valueType == bool
                 ? buildBoolInput(widget.controller)
-                : buildTextInput(
-                    widget.controller,
-                    editable: widget.editable
-                  ),
+                : buildTextInput(widget.controller, editable: widget.editable),
           ),
         )
       ],
     );
   }
 
-  Widget buildTextInput(TextEditingController controller,{bool editable}) {
+  Widget buildTextInput(TextEditingController controller, {bool? editable}) {
     List<TextInputFormatter>? formatters;
     if (widget.valueType == int) {
       formatters = [FilteringTextInputFormatter.digitsOnly];
