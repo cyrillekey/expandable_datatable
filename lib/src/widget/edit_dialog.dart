@@ -65,6 +65,7 @@ class _EditDialogState extends State<EditDialog> {
             ExpandableCell<String>(
               columnTitle: oldCell.columnTitle,
               value: controllers[i].text,
+              cellEditable: oldCell?.cellEditable
             ),
           );
         } else if (oldCell.value is bool) {
@@ -72,6 +73,7 @@ class _EditDialogState extends State<EditDialog> {
             ExpandableCell<bool>(
               columnTitle: oldCell.columnTitle,
               value: controllers[i].text.parseToBool,
+              cellEditable: oldCell?.cellEditable
             ),
           );
         } else if (oldCell.value is int) {
@@ -79,6 +81,7 @@ class _EditDialogState extends State<EditDialog> {
             ExpandableCell<int>(
               columnTitle: oldCell.columnTitle,
               value: int.parse(controllers[i].text),
+              cellEditable: oldCell?.cellEditable
             ),
           );
         } else if (oldCell.value is double) {
@@ -86,6 +89,7 @@ class _EditDialogState extends State<EditDialog> {
             ExpandableCell<double>(
               columnTitle: oldCell.columnTitle,
               value: double.parse(controllers[i].text),
+              cellEditable: oldCell?.cellEditable
             ),
           );
         } else {
@@ -148,6 +152,7 @@ class _EditDialogState extends State<EditDialog> {
           controller: controllers[i],
           columnName: rowCells[i].columnTitle,
           valueType: rowCells[i].value.runtimeType,
+          editable: oldCell?.cellEditable
         ),
       );
     }
@@ -162,12 +167,15 @@ class EditRow extends StatefulWidget {
   final TextEditingController controller;
   final String columnName;
   final Type valueType;
+  final bool? editable;
 
   const EditRow(
       {Key? key,
       required this.controller,
       required this.columnName,
-      required this.valueType})
+      required this.valueType,
+      this.editable
+      })
       : super(key: key);
 
   @override
@@ -191,6 +199,7 @@ class _EditRowState extends State<EditRow> {
                 ? buildBoolInput(widget.controller)
                 : buildTextInput(
                     widget.controller,
+                    editable: widget.editable
                   ),
           ),
         )
@@ -198,7 +207,7 @@ class _EditRowState extends State<EditRow> {
     );
   }
 
-  Widget buildTextInput(TextEditingController controller) {
+  Widget buildTextInput(TextEditingController controller,{bool editable}) {
     List<TextInputFormatter>? formatters;
     if (widget.valueType == int) {
       formatters = [FilteringTextInputFormatter.digitsOnly];
@@ -213,7 +222,7 @@ class _EditRowState extends State<EditRow> {
     return TextFormField(
       keyboardType: formatters != null ? TextInputType.number : null,
       inputFormatters: formatters,
-      enabled: widget.columnName != "ID",
+      enabled: widget.columnName != "ID" && editable != false,
       validator: (String? value) {
         if (value!.isEmpty) {
           return 'Field must not be empty';

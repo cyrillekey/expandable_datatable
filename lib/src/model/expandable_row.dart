@@ -10,9 +10,11 @@ class ExpandableRow {
 class ExpandableCell<T> {
   final String columnTitle;
   T? value;
+  bool? cellEditable;
 
   ExpandableCell({
     required this.columnTitle,
     this.value,
+    this.cellEditable
   });
 }
