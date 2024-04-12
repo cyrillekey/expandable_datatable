@@ -11,10 +11,11 @@ class ExpandableCell<T> {
   final String columnTitle;
   T? value;
   bool? cellEditable;
+  bool? required;
 
-  ExpandableCell({
-    required this.columnTitle,
-    this.value,
-    this.cellEditable
-  });
+  ExpandableCell(
+      {required this.columnTitle,
+      this.value,
+      this.cellEditable,
+      this.required});
 }

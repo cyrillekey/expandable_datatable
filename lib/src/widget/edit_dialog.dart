@@ -65,28 +65,32 @@ class _EditDialogState extends State<EditDialog> {
             ExpandableCell<String>(
                 columnTitle: oldCell.columnTitle,
                 value: controllers[i].text,
-                cellEditable: oldCell.cellEditable),
+                cellEditable: oldCell.cellEditable,
+                required: oldCell.required),
           );
         } else if (oldCell.value is bool) {
           resultCellList.add(
             ExpandableCell<bool>(
                 columnTitle: oldCell.columnTitle,
                 value: controllers[i].text.parseToBool,
-                cellEditable: oldCell.cellEditable),
+                cellEditable: oldCell.cellEditable,
+                required: oldCell.required),
           );
         } else if (oldCell.value is int) {
           resultCellList.add(
             ExpandableCell<int>(
                 columnTitle: oldCell.columnTitle,
                 value: int.parse(controllers[i].text),
-                cellEditable: oldCell.cellEditable),
+                cellEditable: oldCell.cellEditable,
+                required: oldCell.required),
           );
         } else if (oldCell.value is double) {
           resultCellList.add(
             ExpandableCell<double>(
                 columnTitle: oldCell.columnTitle,
                 value: double.parse(controllers[i].text),
-                cellEditable: oldCell.cellEditable),
+                cellEditable: oldCell.cellEditable,
+                required: oldCell.required),
           );
         } else {
           throw NoSupportException(oldCell.value.runtimeType.toString());
@@ -145,10 +149,12 @@ class _EditDialogState extends State<EditDialog> {
     for (int i = 0; i < rowCells.length; i++) {
       widgets.add(
         EditRow(
-            controller: controllers[i],
-            columnName: rowCells[i].columnTitle,
-            valueType: rowCells[i].value.runtimeType,
-            editable: rowCells[i].cellEditable),
+          controller: controllers[i],
+          columnName: rowCells[i].columnTitle,
+          valueType: rowCells[i].value.runtimeType,
+          editable: rowCells[i].cellEditable,
+          required: rowCells[i].required,
+        ),
       );
     }
 
@@ -163,12 +169,14 @@ class EditRow extends StatefulWidget {
   final String columnName;
   final Type valueType;
   final bool? editable;
+  final bool? required;
 
   const EditRow(
       {Key? key,
       required this.controller,
       required this.columnName,
       required this.valueType,
+      this.required,
       this.editable})
       : super(key: key);
 
@@ -198,7 +206,8 @@ class _EditRowState extends State<EditRow> {
     );
   }
 
-  Widget buildTextInput(TextEditingController controller, {bool? editable}) {
+  Widget buildTextInput(TextEditingController controller,
+      {bool? editable, bool? required}) {
     List<TextInputFormatter>? formatters;
     if (widget.valueType == int) {
       formatters = [FilteringTextInputFormatter.digitsOnly];
@@ -215,7 +224,7 @@ class _EditRowState extends State<EditRow> {
       inputFormatters: formatters,
       enabled: widget.columnName != "ID" && editable != false,
       validator: (String? value) {
-        if (value!.isEmpty) {
+        if (value!.isEmpty && required == true) {
           return 'Field must not be empty';
         }
         return null;
