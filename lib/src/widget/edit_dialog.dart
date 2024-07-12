@@ -59,37 +59,53 @@ class _EditDialogState extends State<EditDialog> {
 
       for (int i = 0; i < rowCells.length; i++) {
         ExpandableCell oldCell = rowCells[i];
-
-        if (oldCell.value is String) {
-          resultCellList.add(
-            ExpandableCell<String>(
-                columnTitle: oldCell.columnTitle,
-                value: controllers[i].text,
-                cellEditable: oldCell.cellEditable),
-          );
-        } else if (oldCell.value is bool) {
-          resultCellList.add(
-            ExpandableCell<bool>(
-                columnTitle: oldCell.columnTitle,
-                value: controllers[i].text.parseToBool,
-                cellEditable: oldCell.cellEditable),
-          );
-        } else if (oldCell.value is int) {
-          resultCellList.add(
-            ExpandableCell<int>(
-                columnTitle: oldCell.columnTitle,
-                value: int.parse(controllers[i].text),
-                cellEditable: oldCell.cellEditable),
-          );
-        } else if (oldCell.value is double) {
-          resultCellList.add(
-            ExpandableCell<double>(
-                columnTitle: oldCell.columnTitle,
-                value: double.parse(controllers[i].text),
-                cellEditable: oldCell.cellEditable),
-          );
+        if (oldCell.isDropDown == true) {
+          resultCellList.add(ExpandableCell(
+              columnTitle: oldCell.columnTitle,
+              value: controllers[i].text,
+              cellEditable: oldCell.cellEditable,
+              isDropDown: oldCell.isDropDown,
+              dropDownOptions: oldCell.dropDownOptions));
         } else {
-          throw NoSupportException(oldCell.value.runtimeType.toString());
+          if (oldCell.value is String) {
+            resultCellList.add(
+              ExpandableCell<String>(
+                  columnTitle: oldCell.columnTitle,
+                  value: controllers[i].text,
+                  cellEditable: oldCell.cellEditable,
+                  isDropDown: oldCell.isDropDown,
+                  dropDownOptions: oldCell.dropDownOptions),
+            );
+          } else if (oldCell.value is bool) {
+            resultCellList.add(
+              ExpandableCell<bool>(
+                  columnTitle: oldCell.columnTitle,
+                  value: controllers[i].text.parseToBool,
+                  cellEditable: oldCell.cellEditable,
+                  isDropDown: oldCell.isDropDown,
+                  dropDownOptions: oldCell.dropDownOptions),
+            );
+          } else if (oldCell.value is int) {
+            resultCellList.add(
+              ExpandableCell<int>(
+                  columnTitle: oldCell.columnTitle,
+                  value: int.parse(controllers[i].text),
+                  cellEditable: oldCell.cellEditable,
+                  isDropDown: oldCell.isDropDown,
+                  dropDownOptions: oldCell.dropDownOptions),
+            );
+          } else if (oldCell.value is double) {
+            resultCellList.add(
+              ExpandableCell<double>(
+                  columnTitle: oldCell.columnTitle,
+                  value: double.parse(controllers[i].text),
+                  cellEditable: oldCell.cellEditable,
+                  isDropDown: oldCell.isDropDown,
+                  dropDownOptions: oldCell.dropDownOptions),
+            );
+          } else {
+            throw NoSupportException(oldCell.value.runtimeType.toString());
+          }
         }
       }
 
@@ -145,10 +161,12 @@ class _EditDialogState extends State<EditDialog> {
     for (int i = 0; i < rowCells.length; i++) {
       widgets.add(
         EditRow(
-            controller: controllers[i],
-            columnName: rowCells[i].columnTitle,
-            valueType: rowCells[i].value.runtimeType,
-            editable: rowCells[i].cellEditable),
+          controller: controllers[i],
+          columnName: rowCells[i].columnTitle,
+          valueType: rowCells[i].value.runtimeType,
+          editable: rowCells[i].cellEditable,
+          options: rowCells[i].dropDownOptions,
+        ),
       );
     }
 
@@ -163,13 +181,15 @@ class EditRow extends StatefulWidget {
   final String columnName;
   final Type valueType;
   final bool? editable;
+  final List<String>? options;
 
   const EditRow(
       {Key? key,
       required this.controller,
       required this.columnName,
       required this.valueType,
-      this.editable})
+      this.editable,
+      required this.options})
       : super(key: key);
 
   @override
@@ -189,9 +209,12 @@ class _EditRowState extends State<EditRow> {
           flex: 3,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 3),
-            child: widget.valueType == bool
-                ? buildBoolInput(widget.controller)
-                : buildTextInput(widget.controller, editable: widget.editable),
+            child: widget.options != null && widget.options!.isNotEmpty
+                ? buildDropDownInput(widget.controller, widget.options!)
+                : widget.valueType == bool
+                    ? buildBoolInput(widget.controller)
+                    : buildTextInput(widget.controller,
+                        editable: widget.editable),
           ),
         )
       ],
@@ -237,6 +260,31 @@ class _EditRowState extends State<EditRow> {
           });
         },
         items: <String>['true', 'false'].map<DropdownMenuItem<String>>(
+          (String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          },
+        ).toList(),
+      ),
+    );
+  }
+
+  Widget buildDropDownInput(
+      TextEditingController controller, List<String> options) {
+    String dropdownVal = controller.text;
+
+    return DropdownButtonHideUnderline(
+      child: DropdownButton<String>(
+        value: dropdownVal,
+        onChanged: (String? newValue) {
+          setState(() {
+            controller.text = newValue!;
+            dropdownVal = controller.text;
+          });
+        },
+        items: options.map<DropdownMenuItem<String>>(
           (String value) {
             return DropdownMenuItem<String>(
               value: value,
