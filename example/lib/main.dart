@@ -90,7 +90,11 @@ class _HomePageState extends State<HomePage> {
         ExpandableCell<String>(columnTitle: "Last name", value: e.lastName),
         ExpandableCell<String>(columnTitle: "Maiden name", value: e.maidenName),
         ExpandableCell<int>(columnTitle: "Age", value: e.age),
-        ExpandableCell<String>(columnTitle: "Gender", value: e.gender),
+        ExpandableCell<String>(
+            columnTitle: "Gender",
+            value: e.gender,
+            isDropDown: true,
+            dropDownOptions: ['male', 'female']),
         ExpandableCell<String>(columnTitle: "Email", value: e.email),
       ]);
     }).toList();
@@ -141,15 +145,13 @@ class _HomePageState extends State<HomePage> {
                     headers: headers,
                     rows: rows,
                     multipleExpansion: false,
-                    isEditable: false,
+                    isEditable: true,
                     onRowChanged: (newRow) {
                       print(newRow.cells[01].value);
                     },
                     onPageChanged: (page) {
                       print(page);
                     },
-                    renderEditDialog: (row, onSuccess) =>
-                        _buildEditDialog(row, onSuccess),
                     visibleColumnCount: visibleCount,
                   ),
                 );
