@@ -181,6 +181,8 @@ class _EditDialogState extends State<EditDialog> {
   }
 }
 
+enum DisplayType { column, row }
+
 class EditRow extends StatefulWidget {
   final TextEditingController controller;
   final String columnName;
@@ -188,6 +190,7 @@ class EditRow extends StatefulWidget {
   final bool? editable;
   final List<String>? options;
   final bool? required;
+  final DisplayType? displayType;
 
   const EditRow(
       {Key? key,
@@ -196,7 +199,8 @@ class EditRow extends StatefulWidget {
       required this.valueType,
       this.required,
       this.editable,
-      required this.options})
+      required this.options,
+      this.displayType = DisplayType.row})
       : super(key: key);
 
   @override
@@ -206,26 +210,42 @@ class EditRow extends StatefulWidget {
 class _EditRowState extends State<EditRow> {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          flex: 2,
-          child: Text(widget.columnName),
-        ),
-        Expanded(
-          flex: 3,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 3),
-            child: widget.options != null && widget.options!.isNotEmpty
-                ? buildDropDownInput(widget.controller, widget.options!)
-                : widget.valueType == bool
-                    ? buildBoolInput(widget.controller)
-                    : buildTextInput(widget.controller,
-                        editable: widget.editable),
-          ),
-        )
-      ],
-    );
+    return widget.displayType == DisplayType.row
+        ? Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: Text(widget.columnName),
+              ),
+              Expanded(
+                flex: 3,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 3),
+                  child: widget.options != null && widget.options!.isNotEmpty
+                      ? buildDropDownInput(widget.controller, widget.options!)
+                      : widget.valueType == bool
+                          ? buildBoolInput(widget.controller)
+                          : buildTextInput(widget.controller,
+                              editable: widget.editable),
+                ),
+              )
+            ],
+          )
+        : Column(
+            children: [
+              Text(widget.columnName),
+              const SizedBox(
+                height: 2,
+              ),
+              Expanded(
+                  child: widget.options != null && widget.options!.isNotEmpty
+                      ? buildDropDownInput(widget.controller, widget.options!)
+                      : widget.valueType == bool
+                          ? buildBoolInput(widget.controller)
+                          : buildTextInput(widget.controller,
+                              editable: widget.editable))
+            ],
+          );
   }
 
   Widget buildTextInput(TextEditingController controller,
