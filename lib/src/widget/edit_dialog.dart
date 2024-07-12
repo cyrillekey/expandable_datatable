@@ -65,6 +65,7 @@ class _EditDialogState extends State<EditDialog> {
               value: controllers[i].text,
               cellEditable: oldCell.cellEditable,
               isDropDown: oldCell.isDropDown,
+              required: oldCell.required,
               dropDownOptions: oldCell.dropDownOptions));
         } else {
           if (oldCell.value is String) {
@@ -73,6 +74,7 @@ class _EditDialogState extends State<EditDialog> {
                   columnTitle: oldCell.columnTitle,
                   value: controllers[i].text,
                   cellEditable: oldCell.cellEditable,
+                  required: oldCell.required,
                   isDropDown: oldCell.isDropDown,
                   dropDownOptions: oldCell.dropDownOptions),
             );
@@ -82,6 +84,7 @@ class _EditDialogState extends State<EditDialog> {
                   columnTitle: oldCell.columnTitle,
                   value: controllers[i].text.parseToBool,
                   cellEditable: oldCell.cellEditable,
+                  required: oldCell.required,
                   isDropDown: oldCell.isDropDown,
                   dropDownOptions: oldCell.dropDownOptions),
             );
@@ -91,6 +94,7 @@ class _EditDialogState extends State<EditDialog> {
                   columnTitle: oldCell.columnTitle,
                   value: int.parse(controllers[i].text),
                   cellEditable: oldCell.cellEditable,
+                  required: oldCell.required,
                   isDropDown: oldCell.isDropDown,
                   dropDownOptions: oldCell.dropDownOptions),
             );
@@ -100,6 +104,7 @@ class _EditDialogState extends State<EditDialog> {
                   columnTitle: oldCell.columnTitle,
                   value: double.parse(controllers[i].text),
                   cellEditable: oldCell.cellEditable,
+                  required: oldCell.required,
                   isDropDown: oldCell.isDropDown,
                   dropDownOptions: oldCell.dropDownOptions),
             );
@@ -182,12 +187,14 @@ class EditRow extends StatefulWidget {
   final Type valueType;
   final bool? editable;
   final List<String>? options;
+  final bool? required;
 
   const EditRow(
       {Key? key,
       required this.controller,
       required this.columnName,
       required this.valueType,
+      this.required,
       this.editable,
       required this.options})
       : super(key: key);
@@ -221,7 +228,8 @@ class _EditRowState extends State<EditRow> {
     );
   }
 
-  Widget buildTextInput(TextEditingController controller, {bool? editable}) {
+  Widget buildTextInput(TextEditingController controller,
+      {bool? editable, bool? required}) {
     List<TextInputFormatter>? formatters;
     if (widget.valueType == int) {
       formatters = [FilteringTextInputFormatter.digitsOnly];
@@ -238,7 +246,7 @@ class _EditRowState extends State<EditRow> {
       inputFormatters: formatters,
       enabled: widget.columnName != "ID" && editable != false,
       validator: (String? value) {
-        if (value!.isEmpty) {
+        if (value!.isEmpty && required == true) {
           return 'Field must not be empty';
         }
         return null;

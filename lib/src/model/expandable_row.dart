@@ -15,12 +15,14 @@ class ExpandableCell<T> {
   bool? cellEditable;
   bool isDropDown;
   List<String>? dropDownOptions;
+  bool? required;
 
   ExpandableCell(
       {required this.columnTitle,
       this.value,
       this.cellEditable,
       this.isDropDown = false,
+      this.required,
       List<String>? dropDownOptions})
       : dropDownOptions = dropDownOptions ?? [] {
     alwaysAssert(

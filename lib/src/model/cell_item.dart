@@ -11,9 +11,8 @@ class CellItem {
   /// The flexible value you want this cell to contain
   int? flex;
 
-  CellItem({
-    required this.columnName,
-    this.value,
-    this.flex,
-  });
+  // If is required by force before submitting
+  bool? required;
+
+  CellItem({required this.columnName, this.value, this.flex, this.required});
 }
