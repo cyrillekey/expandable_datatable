@@ -312,24 +312,22 @@ class _EditRowState extends State<EditRow> {
       TextEditingController controller, List<String> options) {
     String dropdownVal = controller.text;
 
-    return DropdownButtonHideUnderline(
-      child: DropdownButton<String>(
-        value: dropdownVal,
-        onChanged: (String? newValue) {
-          setState(() {
-            controller.text = newValue!;
-            dropdownVal = controller.text;
-          });
+    return DropdownButton<String>(
+      value: dropdownVal,
+      onChanged: (String? newValue) {
+        setState(() {
+          controller.text = newValue!;
+          dropdownVal = controller.text;
+        });
+      },
+      items: options.map<DropdownMenuItem<String>>(
+        (String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
         },
-        items: options.map<DropdownMenuItem<String>>(
-          (String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          },
-        ).toList(),
-      ),
+      ).toList(),
     );
   }
 }
