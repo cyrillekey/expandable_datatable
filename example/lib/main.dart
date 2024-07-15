@@ -94,7 +94,8 @@ class _HomePageState extends State<HomePage> {
             columnTitle: "Gender",
             value: e.gender,
             isDropDown: true,
-            dropDownOptions: ['male', 'female']),
+            dropDownOptions: ['male', 'female'],
+            displayType: DisplayType.column),
         ExpandableCell<String>(columnTitle: "Email", value: e.email),
       ]);
     }).toList();
