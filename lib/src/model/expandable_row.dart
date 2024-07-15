@@ -1,5 +1,7 @@
 import 'package:expandable_datatable/src/utility/condition_assert.dart';
 
+enum DisplayType { column, row }
+
 class ExpandableRow {
   final List<ExpandableCell> _cells;
   ExpandableRow({
@@ -16,9 +18,11 @@ class ExpandableCell<T> {
   bool isDropDown;
   List<String>? dropDownOptions;
   bool? required;
+  DisplayType? displayType;
 
   ExpandableCell(
       {required this.columnTitle,
+      this.displayType = DisplayType.row,
       this.value,
       this.cellEditable,
       this.isDropDown = false,

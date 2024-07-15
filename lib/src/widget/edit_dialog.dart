@@ -66,7 +66,8 @@ class _EditDialogState extends State<EditDialog> {
               cellEditable: oldCell.cellEditable,
               isDropDown: oldCell.isDropDown,
               required: oldCell.required,
-              dropDownOptions: oldCell.dropDownOptions));
+              dropDownOptions: oldCell.dropDownOptions,
+              displayType: oldCell.displayType));
         } else {
           if (oldCell.value is String) {
             resultCellList.add(
@@ -76,7 +77,8 @@ class _EditDialogState extends State<EditDialog> {
                   cellEditable: oldCell.cellEditable,
                   required: oldCell.required,
                   isDropDown: oldCell.isDropDown,
-                  dropDownOptions: oldCell.dropDownOptions),
+                  dropDownOptions: oldCell.dropDownOptions,
+                  displayType: oldCell.displayType),
             );
           } else if (oldCell.value is bool) {
             resultCellList.add(
@@ -86,7 +88,8 @@ class _EditDialogState extends State<EditDialog> {
                   cellEditable: oldCell.cellEditable,
                   required: oldCell.required,
                   isDropDown: oldCell.isDropDown,
-                  dropDownOptions: oldCell.dropDownOptions),
+                  dropDownOptions: oldCell.dropDownOptions,
+                  displayType: oldCell.displayType),
             );
           } else if (oldCell.value is int) {
             resultCellList.add(
@@ -96,7 +99,8 @@ class _EditDialogState extends State<EditDialog> {
                   cellEditable: oldCell.cellEditable,
                   required: oldCell.required,
                   isDropDown: oldCell.isDropDown,
-                  dropDownOptions: oldCell.dropDownOptions),
+                  dropDownOptions: oldCell.dropDownOptions,
+                  displayType: oldCell.displayType),
             );
           } else if (oldCell.value is double) {
             resultCellList.add(
@@ -106,7 +110,8 @@ class _EditDialogState extends State<EditDialog> {
                   cellEditable: oldCell.cellEditable,
                   required: oldCell.required,
                   isDropDown: oldCell.isDropDown,
-                  dropDownOptions: oldCell.dropDownOptions),
+                  dropDownOptions: oldCell.dropDownOptions,
+                  displayType: oldCell.displayType),
             );
           } else {
             throw NoSupportException(oldCell.value.runtimeType.toString());
@@ -171,6 +176,7 @@ class _EditDialogState extends State<EditDialog> {
           valueType: rowCells[i].value.runtimeType,
           editable: rowCells[i].cellEditable,
           options: rowCells[i].dropDownOptions,
+          displayType: rowCells[i].displayType,
         ),
       );
     }
@@ -180,8 +186,6 @@ class _EditDialogState extends State<EditDialog> {
     );
   }
 }
-
-enum DisplayType { column, row }
 
 class EditRow extends StatefulWidget {
   final TextEditingController controller;
@@ -231,20 +235,25 @@ class _EditRowState extends State<EditRow> {
               )
             ],
           )
-        : Column(
-            children: [
-              Text(widget.columnName),
-              const SizedBox(
-                height: 2,
-              ),
-              Expanded(
-                  child: widget.options != null && widget.options!.isNotEmpty
-                      ? buildDropDownInput(widget.controller, widget.options!)
-                      : widget.valueType == bool
-                          ? buildBoolInput(widget.controller)
-                          : buildTextInput(widget.controller,
-                              editable: widget.editable))
-            ],
+        : SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(widget.columnName),
+                const SizedBox(
+                  height: 2,
+                ),
+                SizedBox(
+                    child: widget.options != null && widget.options!.isNotEmpty
+                        ? buildDropDownInput(widget.controller, widget.options!)
+                        : widget.valueType == bool
+                            ? buildBoolInput(widget.controller)
+                            : buildTextInput(widget.controller,
+                                editable: widget.editable))
+              ],
+            ),
           );
   }
 
