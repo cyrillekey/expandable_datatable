@@ -9,7 +9,6 @@ import 'model/sortable_row.dart';
 import 'utility/sort_operations.dart';
 import 'widget/custom_expansion_tile.dart' as custom_tile;
 import 'widget/edit_dialog.dart';
-import 'widget/expansion_container.dart';
 import 'widget/pagination_widget.dart';
 import 'widget/table_header.dart';
 import 'widget/title_container.dart';
@@ -152,15 +151,14 @@ class ExpandableDataTable extends StatefulWidget {
   ///   return Text(row.cells[0].columnTitle);
   /// }
   /// ```
-  final Widget Function(
-    ExpandableRow row,
-  )? renderExpansionContent;
+  final void Function(int index) onDeleteClicked;
 
   ExpandableDataTable({
     Key? key,
     required this.headers,
     required this.rows,
     required this.visibleColumnCount,
+    required this.onDeleteClicked,
     this.pageSize = 10,
     this.multipleExpansion = true,
     this.isEditable = true,
@@ -168,7 +166,6 @@ class ExpandableDataTable extends StatefulWidget {
     this.onPageChanged,
     this.renderEditDialog,
     this.renderCustomPagination,
-    this.renderExpansionContent,
   })  : assert(visibleColumnCount > 0),
         assert(
           rows.isNotEmpty ? headers.length == rows.first.cells.length : true,
@@ -308,18 +305,6 @@ class _ExpandableDataTableState extends State<ExpandableDataTable> {
     setState(() {});
   }
 
-  void _onExpansionChanged(bool value, int rowIndex) {
-    if (widget.multipleExpansion == false) {
-      if (_selectedRow == rowIndex && value == false) {
-        _selectedRow = -1;
-      } else if (value == true) {
-        setState(() {
-          _selectedRow = rowIndex;
-        });
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -410,19 +395,18 @@ class _ExpandableDataTableState extends State<ExpandableDataTable> {
         ),
         child: custom_tile.ExpansionTile(
           tilePadding: context.expandableTheme.contentPadding,
-          showExpansionIcon: expansionCells.isNotEmpty,
-          expansionIcon: context.expandableTheme.expansionIcon,
+          showDeleteIcon: expansionCells.isNotEmpty,
+          deleteIcon: context.expandableTheme.deleteIcon,
           collapsedBackgroundColor:
               currentRowColor ?? context.expandableTheme.rowColor,
           backgroundColor: currentRowColor ?? context.expandableTheme.rowColor,
           trailingWidth: _trailingWidth,
           secondTrailing:
               widget.isEditable ? buildEditIcon(context, index) : null,
-          onExpansionChanged: (value) => _onExpansionChanged(value, index),
+          onDeleteClicked: () => widget.onDeleteClicked(index),
           initiallyExpanded: _selectedRow == index,
           title: buildRowTitleContent(titleCells),
           childrenPadding: EdgeInsets.symmetric(vertical: context.lowValue),
-          children: buildExpansionContent(context, row, expansionCells),
         ),
       ),
     );
@@ -445,24 +429,6 @@ class _ExpandableDataTableState extends State<ExpandableDataTable> {
     return TitleContainer(
       titleCells: titleCells,
     );
-  }
-
-  List<Widget> buildExpansionContent(
-    BuildContext context,
-    ExpandableRow row,
-    List<CellItem> expansionCells,
-  ) {
-    if (expansionCells.isEmpty) {
-      return [];
-    } else if (widget.renderExpansionContent != null) {
-      return [
-        widget.renderExpansionContent!(row),
-      ];
-    }
-
-    return [
-      ExpansionContainer(expansionCells: expansionCells),
-    ];
   }
 
   Widget buildEditIcon(BuildContext context, int rowInd) {

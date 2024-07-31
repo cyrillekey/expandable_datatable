@@ -45,7 +45,7 @@ class ExpansionTile extends StatefulWidget {
     this.leading,
     required this.title,
     this.subtitle,
-    this.onExpansionChanged,
+    required this.onDeleteClicked,
     this.children = const <Widget>[],
     this.trailing,
     this.initiallyExpanded = false,
@@ -63,8 +63,8 @@ class ExpansionTile extends StatefulWidget {
     this.controlAffinity,
     this.trailingWidth,
     this.secondTrailing,
-    this.showExpansionIcon,
-    this.expansionIcon,
+    this.showDeleteIcon,
+    this.deleteIcon,
   })  : assert(
           expandedCrossAxisAlignment != CrossAxisAlignment.baseline,
           'CrossAxisAlignment.baseline is not supported since the expanded children '
@@ -72,10 +72,10 @@ class ExpansionTile extends StatefulWidget {
         ),
         super(key: key);
 
-  final bool? showExpansionIcon;
+  final bool? showDeleteIcon;
   final double? trailingWidth;
   final Widget? secondTrailing;
-  final Icon? expansionIcon;
+  final Icon? deleteIcon;
 
   /// A widget to display before the title.
   ///
@@ -100,7 +100,7 @@ class ExpansionTile extends StatefulWidget {
   /// When the tile starts expanding, this function is called with the value
   /// true. When the tile starts collapsing, this function is called with
   /// the value false.
-  final ValueChanged<bool>? onExpansionChanged;
+  final void Function() onDeleteClicked;
 
   /// The widgets that are displayed when the tile expands.
   ///
@@ -269,16 +269,12 @@ class ExpansionTileState extends State<ExpansionTile>
       CurveTween(curve: Curves.easeOut);
   static final Animatable<double> _easeInTween =
       CurveTween(curve: Curves.easeIn);
-  static final Animatable<double> _halfTween =
-      Tween<double>(begin: 0.0, end: 0.5);
 
   final ColorTween _borderColorTween = ColorTween();
   final ColorTween _headerColorTween = ColorTween();
   final ColorTween _iconColorTween = ColorTween();
   final ColorTween _backgroundColorTween = ColorTween();
   late AnimationController _controller;
-  late Animation<double> _iconTurns;
-  late Animation<double> _heightFactor;
   late Animation<Color?> _borderColor;
   late Animation<Color?> _headerColor;
   late Animation<Color?> _iconColor;
@@ -290,8 +286,6 @@ class ExpansionTileState extends State<ExpansionTile>
   void initState() {
     super.initState();
     _controller = AnimationController(duration: _kExpand, vsync: this);
-    _heightFactor = _controller.drive(_easeInTween);
-    _iconTurns = _controller.drive(_halfTween.chain(_easeInTween));
     _borderColor = _controller.drive(_borderColorTween.chain(_easeOutTween));
     _headerColor = _controller.drive(_headerColorTween.chain(_easeInTween));
     _iconColor = _controller.drive(_iconColorTween.chain(_easeInTween));
@@ -321,21 +315,30 @@ class ExpansionTileState extends State<ExpansionTile>
   }
 
   void handleTap() {
-    setState(() {
-      _isExpanded = !_isExpanded;
-      if (_isExpanded) {
-        _controller.forward();
-      } else {
-        _controller.reverse().then<void>((void value) {
-          if (!mounted) return;
-          setState(() {
-            // Rebuild without widget.children.
-          });
-        });
-      }
-      PageStorage.of(context).writeState(context, _isExpanded);
-    });
-    widget.onExpansionChanged?.call(_isExpanded);
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              scrollable: false,
+              title: const Text('Are you sure ?'),
+              content: const Text(
+                  "This action is not reverible are you sure you wish to delete this row ?"),
+              actions: [
+                TextButton(
+                  onPressed: () => widget.onDeleteClicked.call(),
+                  child: const Text(
+                    'DELETE',
+                    style: TextStyle(color: Colors.cyan),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    'CANCEL',
+                    style: TextStyle(color: Colors.cyan),
+                  ),
+                ),
+              ],
+            ));
   }
 
   // Platform or null affinity defaults to trailing.
@@ -354,18 +357,11 @@ class ExpansionTileState extends State<ExpansionTile>
     return SizedBox(
       width: widget.trailingWidth,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           widget.secondTrailing ?? Container(),
-          Visibility(
-            visible: widget.showExpansionIcon ?? true,
-            child: GestureDetector(
-              onTap: () => handleTap(),
-              child: RotationTransition(
-                turns: _iconTurns,
-                child: widget.expansionIcon,
-              ),
-            ),
+          GestureDetector(
+            onTap: () => handleTap(),
+            child: widget.deleteIcon,
           ),
         ],
       ),
@@ -410,18 +406,8 @@ class ExpansionTileState extends State<ExpansionTile>
                   widget.tilePadding ?? expansionTileTheme.tilePadding,
               leading: widget.leading ?? _buildLeadingIcon(context),
               title: widget.title,
-              dense: true,
               subtitle: widget.subtitle,
               trailing: widget.trailing ?? _buildTrailingIcon(context),
-            ),
-          ),
-          ClipRect(
-            child: Align(
-              alignment: widget.expandedAlignment ??
-                  expansionTileTheme.expandedAlignment ??
-                  Alignment.center,
-              heightFactor: _heightFactor.value,
-              child: child,
             ),
           ),
         ],
