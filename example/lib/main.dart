@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
   void createDataSource() {
     headers = [
       ExpandableColumn<int>(columnTitle: "ID", columnFlex: 1),
-      ExpandableColumn<String>(columnTitle: "First name", columnFlex: 1),
+      ExpandableColumn<String>(columnTitle: "First name", columnFlex: 2),
       ExpandableColumn<String>(columnTitle: "Last name", columnFlex: 2),
       ExpandableColumn<String>(columnTitle: "Maiden name", columnFlex: 2),
       ExpandableColumn<int>(columnTitle: "Age", columnFlex: 1),

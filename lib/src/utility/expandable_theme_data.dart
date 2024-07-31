@@ -146,12 +146,12 @@ class ExpandableThemeData {
     editIcon ??= Icon(
       Icons.edit,
       color: theme.unselectedWidgetColor,
-      size: 16,
+      size: 24,
     );
     deleteIcon ??= Icon(
       Icons.delete,
       color: theme.unselectedWidgetColor,
-      size: 18,
+      size: 24,
     );
     paginationSize ??= 48;
 

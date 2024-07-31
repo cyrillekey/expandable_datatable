@@ -359,7 +359,7 @@ class ExpansionTileState extends State<ExpansionTile>
 
   Widget? _buildIcon(BuildContext context) {
     return SizedBox(
-      width: widget.trailingWidth,
+      width: MediaQuery.of(context).size.width * .20,
       child: Row(
         children: [
           widget.secondTrailing ?? Container(),
