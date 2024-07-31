@@ -150,6 +150,7 @@ class _HomePageState extends State<HomePage> {
                     onRowChanged: (newRow) {
                       print(newRow.cells[01].value);
                     },
+                    deleteLoading: false,
                     onPageChanged: (page) {
                       print(page);
                     },

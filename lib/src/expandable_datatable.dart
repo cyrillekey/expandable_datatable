@@ -153,20 +153,23 @@ class ExpandableDataTable extends StatefulWidget {
   /// ```
   final void Function(int index) onDeleteClicked;
 
-  ExpandableDataTable({
-    Key? key,
-    required this.headers,
-    required this.rows,
-    required this.visibleColumnCount,
-    required this.onDeleteClicked,
-    this.pageSize = 10,
-    this.multipleExpansion = true,
-    this.isEditable = true,
-    this.onRowChanged,
-    this.onPageChanged,
-    this.renderEditDialog,
-    this.renderCustomPagination,
-  })  : assert(visibleColumnCount > 0),
+  final bool? deleteLoading;
+
+  ExpandableDataTable(
+      {Key? key,
+      required this.headers,
+      required this.rows,
+      required this.visibleColumnCount,
+      required this.onDeleteClicked,
+      this.pageSize = 10,
+      this.multipleExpansion = true,
+      this.isEditable = true,
+      this.onRowChanged,
+      this.onPageChanged,
+      this.renderEditDialog,
+      this.renderCustomPagination,
+      this.deleteLoading})
+      : assert(visibleColumnCount > 0),
         assert(
           rows.isNotEmpty ? headers.length == rows.first.cells.length : true,
         ),
@@ -407,6 +410,7 @@ class _ExpandableDataTableState extends State<ExpandableDataTable> {
           initiallyExpanded: _selectedRow == index,
           title: buildRowTitleContent(titleCells),
           childrenPadding: EdgeInsets.symmetric(vertical: context.lowValue),
+          isDeleteLoading: widget.deleteLoading ?? false,
         ),
       ),
     );

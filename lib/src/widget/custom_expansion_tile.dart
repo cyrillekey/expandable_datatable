@@ -44,8 +44,9 @@ class ExpansionTile extends StatefulWidget {
     Key? key,
     this.leading,
     required this.title,
-    this.subtitle,
     required this.onDeleteClicked,
+    required this.isDeleteLoading,
+    this.subtitle,
     this.children = const <Widget>[],
     this.trailing,
     this.initiallyExpanded = false,
@@ -76,6 +77,7 @@ class ExpansionTile extends StatefulWidget {
   final double? trailingWidth;
   final Widget? secondTrailing;
   final Icon? deleteIcon;
+  final bool isDeleteLoading;
 
   /// A widget to display before the title.
   ///
@@ -323,13 +325,15 @@ class ExpansionTileState extends State<ExpansionTile>
               content: const Text(
                   "This action is not reverible are you sure you wish to delete this row ?"),
               actions: [
-                TextButton(
-                  onPressed: () => widget.onDeleteClicked.call(),
-                  child: const Text(
-                    'DELETE',
-                    style: TextStyle(color: Colors.cyan),
-                  ),
-                ),
+                widget.isDeleteLoading
+                    ? const CircularProgressIndicator()
+                    : TextButton(
+                        onPressed: () => widget.onDeleteClicked.call(),
+                        child: const Text(
+                          'DELETE',
+                          style: TextStyle(color: Colors.cyan),
+                        ),
+                      ),
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: const Text(
