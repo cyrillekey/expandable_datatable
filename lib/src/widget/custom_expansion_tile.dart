@@ -323,7 +323,7 @@ class ExpansionTileState extends State<ExpansionTile>
               scrollable: false,
               title: const Text('Are you sure ?'),
               content: const Text(
-                  "This action is not reverible are you sure you wish to delete this row ?"),
+                  "This action is not reversible are you sure you wish to delete this row ?"),
               actions: [
                 widget.isDeleteLoading
                     ? const CircularProgressIndicator()
