@@ -151,7 +151,7 @@ class ExpandableDataTable extends StatefulWidget {
   ///   return Text(row.cells[0].columnTitle);
   /// }
   /// ```
-  final void Function(int index) onDeleteClicked;
+  final void Function(int index, int page) onDeleteClicked;
 
   final bool? deleteLoading;
 
@@ -406,7 +406,7 @@ class _ExpandableDataTableState extends State<ExpandableDataTable> {
           trailingWidth: _trailingWidth,
           secondTrailing:
               widget.isEditable ? buildEditIcon(context, index) : null,
-          onDeleteClicked: () => widget.onDeleteClicked(index),
+          onDeleteClicked: () => widget.onDeleteClicked(index, _currentPage),
           initiallyExpanded: _selectedRow == index,
           title: buildRowTitleContent(titleCells),
           childrenPadding: EdgeInsets.symmetric(vertical: context.lowValue),

@@ -155,8 +155,8 @@ class _HomePageState extends State<HomePage> {
                       print(page);
                     },
                     visibleColumnCount: visibleCount,
-                    onDeleteClicked: (value) {
-                      print(value);
+                    onDeleteClicked: (value, page) {
+                      print(value * page);
                     },
                   ),
                 );
