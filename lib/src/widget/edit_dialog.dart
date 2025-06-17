@@ -272,7 +272,7 @@ class _EditRowState extends State<EditRow> {
 
     return TextFormField(
       keyboardType: formatters != null ? TextInputType.number : null,
-      inputFormatters: formatters,
+      // inputFormatters: formatters,
       enabled: widget.columnName != "ID" && editable != false,
       validator: (String? value) {
         if (value!.isEmpty && required == true) {
