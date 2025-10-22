@@ -95,7 +95,7 @@ class _EditDialogState extends State<EditDialog> {
             resultCellList.add(
               ExpandableCell<int>(
                   columnTitle: oldCell.columnTitle,
-                  value: int.parse(controllers[i].text),
+                  value: int.tryParse(controllers[i].text) ?? 0,
                   cellEditable: oldCell.cellEditable,
                   required: oldCell.required,
                   isDropDown: oldCell.isDropDown,
@@ -272,11 +272,25 @@ class _EditRowState extends State<EditRow> {
 
     return TextFormField(
       keyboardType: formatters != null ? TextInputType.number : null,
-      // inputFormatters: formatters,
       enabled: widget.columnName != "ID" && editable != false,
       validator: (String? value) {
         if (value!.isEmpty && required == true) {
           return 'Field must not be empty';
+        }
+        if (required == true) {
+          if (widget.valueType == int && int.tryParse(value) == null) {
+            return 'Invalid integer value';
+          } else if (widget.valueType == double &&
+              double.tryParse(value) == null) {
+            return 'Invalid double value';
+          }
+          if (widget.valueType == int && (int.tryParse(value) ?? 0) < 1) {
+            return 'Value must be greater than zero';
+          }
+          if (widget.valueType == double &&
+              (double.tryParse(value) ?? 0.0) < 1.0) {
+            return 'Value must be greater than zero';
+          }
         }
         return null;
       },
